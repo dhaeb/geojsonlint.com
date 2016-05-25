@@ -91,20 +91,20 @@
                     <input id="clear-current" type="checkbox" checked="checked">
                     <label for="clear-current" style="font-weight: normal;">Clear Current Features</label>
                 </div>
-                <div class="row-fluid text-centered"><a id="submit" class="btn btn-primary btn-large btn-action">Test GeoJSON</a>
+                <div class="row-fluid text-centered">
+		   <a id="submit" class="btn btn-primary btn-large btn-action">Test GeoJSON</a>
                     <a id="clear" class="btn btn-large btn-action btn-default">Clear</a>
                 </div>
+		<form class="row-fluid" id="uploadForm" >
+		    <label class="row-fluid text-centered" style="margin-bottom: 10px;">Select geojson file to upload:</label>
+	  	    <input class="btn btn-large btn-action btn-default" type="file" name="uploadFile" id="uploadInput">
+		    <input class="btn btn-primary btn-large btn-action" type="submit" value="uploadSubmit" id="uploadSubmit">
+		</form>
             </div>
             <div class="col-sm-8 right full-height">
                 <div id="map-container" class="full-height"></div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <h3>Questions?</h3>
-        <p>
-            Read the <a href="http://geojason.info/2012/geojson-validation-via-geojsonlint.com/">blog post</a> or check out the <a href="https://github.com/JasonSanford/geojsonlint.com">source code</a>.
-        </p>
     </div>
     <div id="modal-message" class="modal">
         <div class="modal-dialog">

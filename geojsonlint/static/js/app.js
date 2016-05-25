@@ -1,5 +1,7 @@
 (function() {
-var map;
+var map;		
+
+
 $(document).ready(function() {
     var road_layer = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -36,31 +38,43 @@ $(document).ready(function() {
     });
 
     map.addLayer(geojsonLayer);
-
+    var handleGeoJson = function(testJson){		
+	var errors = geojsonhint.hint(testJson);
+	if (errors.length > 0) {
+	  var message = errors.map(function(error) {
+	    return 'Line ' + error.line + ': ' + error.message;
+	}).join('<br>')
+	  $('#modal-message-body').html(message);
+	  $('#modal-message-header').html('Invalid GeoJSON');
+	  $('#modal-message').modal('show');
+	} else {
+	  if ($('#clear-current').attr('checked')) {
+	   geojsonLayer.clearLayers();
+	  }
+	  geojsonLayer.addData(JSON.parse(testJson));
+	  map.fitBounds(geojsonLayer.getBounds());
+	}
+    };
     L.control.layers({'Road': road_layer, 'Satellite': satellite_layer}, {'GeoJSON': geojsonLayer}).addTo(map);
 
+    $("#uploadForm").on("submit",function(event){
+	event.preventDefault();
+	var tech = $('#uploadInput')[0];
+	var fReader = new FileReader();
+	fReader.readAsText(tech.files[0]);
+	fReader.onloadend = function(event){
+	  var content = event.target.result;
+    	  handleGeoJson(content, geojsonLayer);
+	};
+    });
+
     $('#submit').on('click', function() {
-        if ($('#geojson-input').val().length < 1) {
+        if ($('#geojson-input').val().legth < 1) {
             return;
         }
         var testJson = $('#geojson-input').val();
-
-        var errors = geojsonhint.hint(testJson);
-
-        if (errors.length > 0) {
-          var message = errors.map(function(error) {
-            return 'Line ' + error.line + ': ' + error.message;
-          }).join('<br>')
-          $('#modal-message-body').html(message);
-          $('#modal-message-header').html('Invalid GeoJSON');
-          $('#modal-message').modal('show');
-        } else {
-          if ($('#clear-current').attr('checked')) {
-            geojsonLayer.clearLayers();
-          }
-          geojsonLayer.addData(JSON.parse($('#geojson-input').val()));
-          map.fitBounds(geojsonLayer.getBounds());
-        }
+        handleGeoJson(testJson, geojsonLayer);
+        
     });
 
     $('#clear').on('click', function() {
